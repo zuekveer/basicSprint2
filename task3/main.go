@@ -12,38 +12,32 @@ package task3
 
 import (
 	"fmt"
-	"sync"
+	"time"
 )
 
-type SafeCounter struct {
-	value int
-	mu    sync.RWMutex
-}
-
-func (c *SafeCounter) Inc() {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	c.value++
-}
-
-func (c *SafeCounter) Value() int {
-	c.mu.RLock()
-	defer c.mu.RUnlock()
-	return c.value
+func WaitAny(a, b <-chan string) string {
+	select {
+	case v := <-a:
+		return v
+	case v := <-b:
+		return v
+	}
 }
 
 func main() {
-	counter := SafeCounter{}
+	ch1 := make(chan string)
+	ch2 := make(chan string)
 
-	var wg sync.WaitGroup
-	for range 1000 {
-		wg.Add(1)
-		go func() {
-			counter.Inc()
-			wg.Done()
-		}()
-	}
+	go func() {
+		time.Sleep(100 * time.Millisecond)
+		ch1 <- "from ch1"
+	}()
 
-	wg.Wait()
-	fmt.Println(counter.Value())
+	go func() {
+		time.Sleep(50 * time.Millisecond)
+		ch2 <- "from ch2"
+	}()
+
+	result := WaitAny(ch1, ch2)
+	fmt.Println(result) 
 }
