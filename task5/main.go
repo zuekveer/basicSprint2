@@ -12,3 +12,15 @@ func main() {
 	<-ch // ← где ошибка?
 }
 */
+
+package task5
+
+func main() {
+    ch := make(chan int, 2)
+    go func() {
+        ch <- 42
+        ch <- 100  
+    }()
+    <-ch  
+    <-ch  
+}
