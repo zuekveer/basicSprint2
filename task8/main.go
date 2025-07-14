@@ -14,3 +14,11 @@ type MyStruct2 struct {
 	C int8
 }
 */
+
+package task8
+
+type MyStruct2 struct {
+	B int64
+	A int8
+	C int8
+}
